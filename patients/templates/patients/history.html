@@ -1,33 +1,85 @@
 {% extends 'base.html' %}
 {% block content %}
+
+<style>
+  .history-container {
+    max-width: 900px;
+    margin: 30px auto;
+    padding: 20px;
+  }
+
+  .section-title {
+    font-size: 24px;
+    font-weight: 700;
+    margin-bottom: 15px;
+    color: #2a4d96;
+  }
+
+  .history-card {
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 25px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    transition: transform 0.2s ease;
+  }
+
+  .history-card:hover {
+    transform: translateY(-3px);
+  }
+
+  .history-list li {
+    padding: 10px 0;
+    border-bottom: 1px solid #e6e6e6;
+    font-size: 17px;
+  }
+
+  .history-list li:last-child {
+    border-bottom: none;
+  }
+
+  .empty-msg {
+    color: #777;
+    font-style: italic;
+  }
+</style>
+
 <div class="history-container">
-  <h2>My History</h2>
 
-  <h3>Appointments</h3>
-  <ul>
-    {% for appointment in appointments %}
-      <li>{{ appointment.date }} - {{ appointment.doctor.name }}</li>
-    {% empty %}
-      <li>No appointments found.</li>
-    {% endfor %}
-  </ul>
+  <h2 class="section-title">📄 My History</h2>
 
-  <h3>Prescriptions</h3>
-  <ul>
-    {% for prescription in prescriptions %}
-      <li>{{ prescription.date }} - {{ prescription.medicine }}</li>
-    {% empty %}
-      <li>No prescriptions found.</li>
-    {% endfor %}
-  </ul>
+  <div class="history-card">
+    <h3>📅 Appointments</h3>
+    <ul class="history-list">
+      {% for appointment in appointments %}
+        <li>{{ appointment.date }} — {{ appointment.doctor.name }}</li>
+      {% empty %}
+        <li class="empty-msg">No appointments found.</li>
+      {% endfor %}
+    </ul>
+  </div>
 
-  <h3>Reports</h3>
-  <ul>
-    {% for report in reports %}
-      <li>{{ report.date }} - {{ report.type }}</li>
-    {% empty %}
-      <li>No reports found.</li>
-    {% endfor %}
-  </ul>
+  <div class="history-card">
+    <h3>💊 Prescriptions</h3>
+    <ul class="history-list">
+      {% for prescription in prescriptions %}
+        <li>{{ prescription.date }} — {{ prescription.medicine }}</li>
+      {% empty %}
+        <li class="empty-msg">No prescriptions found.</li>
+      {% endfor %}
+    </ul>
+  </div>
+
+  <div class="history-card">
+    <h3>📁 Reports</h3>
+    <ul class="history-list">
+      {% for report in reports %}
+        <li>{{ report.date }} — {{ report.type }}</li>
+      {% empty %}
+        <li class="empty-msg">No reports found.</li>
+      {% endfor %}
+    </ul>
+  </div>
+
 </div>
 {% endblock %}

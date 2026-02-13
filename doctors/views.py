@@ -22,7 +22,7 @@ from django.shortcuts import render, get_object_or_404
 from django.contrib.auth import get_user_model
 from django.utils import timezone
 from django.urls import reverse, NoReverseMatch
-
+from django.contrib.auth.decorators import login_required
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status, permissions
@@ -43,7 +43,7 @@ from .services import (
 from . import presenters
 from . import services as dashboard_services
 
-logger = logging.getLogger(__name__)
+
 
 # ---------------------------
 # Section A: API Views
@@ -220,6 +220,14 @@ class DoctorDetailView(View):
 # ---------------------------
 
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.views.generic import TemplateView
+from django.urls import reverse, NoReverseMatch
+import logging
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.views.generic import TemplateView
+from django.shortcuts import redirect
+from django.contrib import messages
+logger = logging.getLogger(__name__)
 
 class DoctorDashboardView(LoginRequiredMixin, TemplateView):
     """
@@ -234,6 +242,13 @@ class DoctorDashboardView(LoginRequiredMixin, TemplateView):
     - Keeps service calls isolated so one failing integration doesn't break the page.
     """
     template_name = "doctors/dashboard.html"
+
+    def dispatch(self, request, *args, **kwargs):
+        # Only allow doctors
+        if not request.user.is_authenticated or not request.user.is_doctor():
+            messages.error(request, "You are not authorized to access the doctor dashboard.")
+            return redirect("accounts:login")  # or redirect to patient dashboard
+        return super().dispatch(request, *args, **kwargs)
 
     def _resolve_named_url(self, url_name: str, url_arg=None):
         """

@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="container mt-4">
+  <div class="card shadow-sm border-0">
+    <div class="card-header bg-primary text-white">
+      <h3 class="mb-0">Appointment Details</h3>
+    </div>
+    <div class="card-body">
+      <div class="row mb-3">
+        <div class="col-md-6">
+          <p><strong>Date:</strong> {{ appointment.scheduled_time|date:"M d, Y" }}</p>
+          <p><strong>Time:</strong> {{ appointment.scheduled_time|date:"h:i A" }}</p>
+          <p><strong>Reason:</strong> {{ appointment.reason }}</p>
+        </div>
+        <div class="col-md-6">
+          <p><strong>Status:</strong> 
+            <span class="badge 
+              {% if appointment.status == 'confirmed' %} bg-success 
+              {% elif appointment.status == 'pending' %} bg-warning text-dark 
+              {% elif appointment.status == 'cancelled' %} bg-danger 
+              {% else %} bg-secondary {% endif %}">
+              {{ appointment.status|title }}
+            </span>
+          </p>
+          <p><strong>Doctor:</strong> {{ appointment.doctor.get_full_name }}</p>
+          <p><strong>Patient:</strong> {{ appointment.patient.user.get_full_name }}</p>
+        </div>
+      </div>
+    </div>
+    <div class="card-footer d-flex justify-content-between">
+      <a href="{% url 'appointments:appointment-cancel' appointment.id %}" 
+         class="btn btn-outline-danger">
+        <i class="bi bi-x-circle"></i> Cancel Appointment
+      </a>
+      <a href="{% url 'appointments:appointment-list' %}" 
+         class="btn btn-outline-secondary">
+        <i class="bi bi-arrow-left"></i> Back to Appointments
+      </a>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

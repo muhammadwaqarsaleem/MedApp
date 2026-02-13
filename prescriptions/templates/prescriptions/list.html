@@ -18,7 +18,7 @@
       <h1>💊 My Prescriptions</h1>
       <p class="header-subtitle">View and manage your prescriptions</p>
     </div>
-    {% if user.is_doctor %}
+    {% if user.doctorprofile %}
       <a href="{% url 'prescriptions:create' %}" class="btn btn-primary">
         <span>➕</span> Create Prescription
       </a>
@@ -37,24 +37,13 @@
   {# Filters Section #}
   <div class="prescriptions-filters">
     <div class="filter-tabs">
-      <button class="filter-tab active" data-filter="all">
-        All Prescriptions
-      </button>
-      <button class="filter-tab" data-filter="recent">
-        Recent (Last 30 days)
-      </button>
-      <button class="filter-tab" data-filter="active">
-        Active
-      </button>
+      <button class="filter-tab active" data-filter="all">All Prescriptions</button>
+      <button class="filter-tab" data-filter="recent">Recent (Last 30 days)</button>
+      <button class="filter-tab" data-filter="active">Active</button>
     </div>
 
     <div class="filter-search">
-      <input 
-        type="text" 
-        id="searchInput" 
-        placeholder="Search prescriptions..." 
-        class="form-control"
-      >
+      <input type="text" id="searchInput" placeholder="Search prescriptions..." class="form-control">
     </div>
   </div>
 
@@ -79,21 +68,21 @@
 
           {# Doctor/Patient Info #}
           <div class="prescription-parties">
-            {% if user.is_patient %}
+            {% if user.patientprofile %}
               <div class="party-info">
                 <label>Prescribed by</label>
                 <div class="party-name">
                   <span class="party-icon">👨‍⚕️</span>
-                  Dr. {{ prescription.doctor.user.get_full_name }}
+                  Dr. {{ prescription.appointment.doctor.get_full_name_or_username }}
                 </div>
-                <div class="party-specialty">{{ prescription.doctor.specialization }}</div>
+                <div class="party-specialty">{{ prescription.appointment.doctor.specialization_label }}</div>
               </div>
-            {% elif user.is_doctor %}
+            {% elif user.doctorprofile %}
               <div class="party-info">
                 <label>Patient</label>
                 <div class="party-name">
                   <span class="party-icon">👤</span>
-                  {{ prescription.patient.user.get_full_name }}
+                  {{ prescription.appointment.patient.get_full_name_or_username }}
                 </div>
               </div>
             {% endif %}
@@ -129,9 +118,10 @@
             <a href="{% url 'prescriptions:detail' prescription.id %}" class="btn btn-outline-primary btn-sm">
               <span>👁️</span> View Details
             </a>
-            <button class="btn btn-secondary btn-sm" onclick="downloadPrescription({{ prescription.id }})">
+            <button class="btn btn-secondary btn-sm" onclick="downloadPrescription('{{ prescription.id }}')">
               <span>⬇️</span> Download
             </button>
+
           </div>
         </div>
       {% endfor %}
@@ -139,8 +129,14 @@
       <div class="empty-state">
         <div class="empty-icon">💊</div>
         <h3>No Prescriptions Found</h3>
-        <p>{% if user.is_patient %}You don't have any prescriptions yet.{% else %}You haven't created any prescriptions yet.{% endif %}</p>
-        {% if user.is_doctor %}
+        <p>
+          {% if user.patientprofile %}
+            You don't have any prescriptions yet.
+          {% elif user.doctorprofile %}
+            You haven't created any prescriptions yet.
+          {% endif %}
+        </p>
+        {% if user.doctorprofile %}
           <a href="{% url 'prescriptions:create' %}" class="btn btn-primary">
             Create First Prescription
           </a>

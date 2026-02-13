@@ -7,7 +7,7 @@ development conveniences:
 - Optionally exposes DRF's login views for the browsable API (api-auth).
 All existing app includes and the simple home_view are left intact.
 """
-
+from accounts.views import LogoutView
 from django.contrib import admin
 from django.urls import path, include
 from django.shortcuts import render
@@ -42,6 +42,7 @@ urlpatterns = [
     path('prescriptions/', include('prescriptions.urls')),
     path('reports/', include('reports.urls')),
     path('schedules/', include('schedules.urls')),
+    path("logout/", LogoutView.as_view(), name="logout"),
 
     # -------------------------------
     # Utility + Staging

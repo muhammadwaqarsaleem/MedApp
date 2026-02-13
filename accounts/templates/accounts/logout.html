@@ -1,7 +1,24 @@
 {% extends "base.html" %}
+<<<<<<< HEAD
+{% block title %}Logged Out{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+  <div class="card shadow-sm border-0 text-center">
+    <div class="card-body">
+      <h2 class="mb-3">👋 You’ve been logged out</h2>
+      <p class="text-muted">Thank you for using MedApp. We hope to see you again soon.</p>
+      <div class="mt-4">
+        <a href="{% url 'accounts:login' %}" class="btn btn-primary">Login Again</a>
+        <a href="{% url 'accounts:register' %}" class="btn btn-outline-secondary">Create New Account</a>
+      </div>
+    </div>
+  </div>
+=======
 {% block content %}
 <div class="container py-4">
   <h2>Signing you out...</h2>
   <p class="text-muted">Redirecting to the login page.</p>
+>>>>>>> 206250a635472d1fcf81f5ca962c0a05cd68c0ee
 </div>
 {% endblock %}

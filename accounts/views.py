@@ -151,11 +151,13 @@ class LoginView(View):
         password = form.cleaned_data.get("password")
 
         user = None
+        # Try email first (normalize for case-insensitive match)
         if "@" in identifier:
-            candidate = CustomUser.objects.filter(email__iexact=identifier).first()
+            candidate = CustomUser.objects.filter(email__iexact=identifier.strip().lower()).first()
             if candidate:
                 user = authenticate(request, username=candidate.username, password=password)
 
+        # Fallback to username
         if user is None:
             user = authenticate(request, username=identifier, password=password)
 
@@ -176,15 +178,18 @@ class LoginView(View):
         except Exception:
             pass
 
-        # Map user roles to their respective app namespaces
-        role_to_app = {
-            'PATIENT': 'patients',
-            'DOCTOR': 'doctors',
-            'HOSPITAL': 'hospitals',
-            'ADMIN': 'adminpanel',
-        }
-        app_name = role_to_app.get(user.role, 'patients')  # Default to patients
-        return redirect(reverse(f"{app_name}:dashboard"))
+        # Role-based redirect
+        if user.is_patient():
+            return redirect("patients:dashboard")
+        if user.is_doctor():
+            return redirect("doctors:dashboard")
+        if user.is_hospital():
+            return redirect("hospitals:dashboard")
+        if user.is_admin():
+            return redirect("adminpanel:dashboard")
+
+        # Fallback if no role matched
+        return redirect("accounts:profile")
 
 
 class LogoutView(LoginRequiredMixin, View):

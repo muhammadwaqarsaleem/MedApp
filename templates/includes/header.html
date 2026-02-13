@@ -2,11 +2,17 @@
      Purpose: global navbar fragment included by base.html.
      Notes:
      - Uses Bootstrap's navbar with accessible toggler/collapse.
-     - Replace hrefs with your real URL names; ensure they exist in your project.
+     - Auth-aware: shows user dropdown if logged in, else Login/Signup.
 -->
 {% load static %}
 <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom">
   <div class="container-fluid">
+<<<<<<< HEAD
+    <!-- Brand -->
+    <a class="navbar-brand d-flex align-items-center" href="{% url 'home' %}">
+      <!-- Optional logo -->
+      <!-- <img src="{% static 'img/logo.svg' %}" alt="MedApp" class="me-2" height="24"> -->
+=======
     <!-- Brand: text or logo -->
     <a
       class="navbar-brand brand d-flex align-items-center"
@@ -15,6 +21,7 @@
       <!-- Optional logo image:
       <img src="{% static 'img/logo.svg' %}" alt="MedApp" class="me-2" height="24">
       -->
+>>>>>>> 206250a635472d1fcf81f5ca962c0a05cd68c0ee
       <span>MedApp</span>
     </a>
 
@@ -33,11 +40,14 @@
 
     <!-- Collapsible navigation -->
     <div class="collapse navbar-collapse" id="navMenu">
-      <!-- Left-aligned primary nav -->
+      <!-- Left-aligned nav -->
       <ul class="navbar-nav me-auto">
-        <!-- Replace these URL names with your actual routes or add conditional rendering -->
         <li class="nav-item">
+<<<<<<< HEAD
+          <a class="nav-link" href="{% url 'appointments:appointment-list' %}">Appointments</a>
+=======
           <a href="{% url 'appointments:appointment-list' %}">Appointments</a>
+>>>>>>> 206250a635472d1fcf81f5ca962c0a05cd68c0ee
         </li>
         <li class="nav-item">
           <a class="nav-link" href="{% url 'patients:dashboard' %}">Patients</a>
@@ -47,10 +57,37 @@
         </li>
       </ul>
 
-      <!-- Right-aligned actions (JS can mount auth/user menu here) -->
+      <!-- Right-aligned user actions -->
       <div id="nav-actions" class="d-flex align-items-center">
-        <!-- Example: Login/Signup buttons or user dropdown -->
-        <!-- Your JS can detect auth state and populate this area -->
+        {% if user.is_authenticated %}
+          <div class="dropdown">
+            <button class="btn btn-outline-dark dropdown-toggle" type="button" id="userMenu" data-bs-toggle="dropdown" aria-expanded="false">
+              {{ user.get_full_name|default:user.username }}
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userMenu">
+              <li><span class="dropdown-item-text text-muted small">{{ user.email }}</span></li>
+              <li><hr class="dropdown-divider"></li>
+              <li><a class="dropdown-item" href="{% url 'accounts:profile' %}"><i class="bi bi-person"></i> My Profile</a></li>
+              {% if user.is_patient %}
+                <li><a class="dropdown-item" href="{% url 'patients:dashboard' %}"><i class="bi bi-heart-pulse"></i> Patient Dashboard</a></li>
+              {% elif user.is_doctor %}
+                <li><a class="dropdown-item" href="{% url 'doctors:dashboard' %}"><i class="bi bi-stethoscope"></i> Doctor Dashboard</a></li>
+              {% endif %}
+              <li><a class="dropdown-item" href="{% url 'reports:dashboard' %}"><i class="bi bi-folder"></i> My Reports</a></li>
+              <li>
+                <form action="{% url 'accounts:logout' %}" method="post" style="display:inline;">
+                  {% csrf_token %}
+                  <button type="submit" class="dropdown-item text-danger">
+                    <i class="bi bi-box-arrow-right"></i> Logout
+                  </button>
+                </form>
+              </li>
+            </ul>
+          </div>
+        {% else %}
+          <a href="{% url 'accounts:login' %}" class="btn btn-outline-primary me-2">Login</a>
+          <a href="{% url 'accounts:register' %}" class="btn btn-primary">Sign Up</a>
+        {% endif %}
       </div>
     </div>
   </div>

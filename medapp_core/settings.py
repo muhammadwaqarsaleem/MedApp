@@ -21,7 +21,8 @@ import os
 # Base directory
 # ---------------------------------------------------------------------------
 BASE_DIR = Path(__file__).resolve().parent.parent
-LOGIN_REDIRECT_URL = 'patients:dashboard'
+LOGIN_URL = "accounts:register"  # or "accounts:login" if you prefer
+
 
 # ---------------------------------------------------------------------------
 # Security & debug (keep as in your environment)

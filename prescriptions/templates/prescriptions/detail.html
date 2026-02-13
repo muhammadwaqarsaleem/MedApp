@@ -9,10 +9,8 @@
 
 {% block content %}
 <div class="container prescription-detail-container">
-  {# Breadcrumbs #}
   {% include "includes/breadcrumbs.html" with crumbs=crumbs %}
 
-  {# Display Django messages #}
   {% if messages %}
     {% for message in messages %}
       <div class="alert alert-{{ message.tags }}" role="alert">
@@ -29,7 +27,7 @@
         <div class="prescription-header-info">
           <h1>Prescription #{{ prescription.id }}</h1>
           <p class="prescription-date-large">
-            Issued on {{ prescription.created_at|date:"F d, Y \a\t g:i A" }}
+            Issued on {{ prescription.created_at|date:"F d, Y \\a\\t g:i A" }}
           </p>
         </div>
       </div>
@@ -37,7 +35,7 @@
         <button class="btn btn-outline-primary" onclick="window.print()">
           <span>🖨️</span> Print
         </button>
-        <button class="btn btn-primary" onclick="downloadPrescription({{ prescription.id }})">
+        <button class="btn btn-primary" onclick="downloadPrescription('{{ prescription.id }}')">
           <span>⬇️</span> Download PDF
         </button>
       </div>
@@ -51,9 +49,8 @@
         <div class="party-details">
           <div class="party-avatar">👨‍⚕️</div>
           <div class="party-info-detailed">
-            <h3>Dr. {{ prescription.doctor.user.get_full_name }}</h3>
-            <p class="party-specialty">{{ prescription.doctor.specialization }}</p>
-            <p class="party-contact">License: {{ prescription.doctor.license_number }}</p>
+            <h3>Dr. {{ prescription.appointment.doctor.get_full_name_or_username }}</h3>
+            <p class="party-specialty">{{ prescription.appointment.doctor.specialization_label }}</p>
           </div>
         </div>
       </div>
@@ -64,10 +61,10 @@
         <div class="party-details">
           <div class="party-avatar">👤</div>
           <div class="party-info-detailed">
-            <h3>{{ prescription.patient.user.get_full_name }}</h3>
-            <p class="party-contact">{{ prescription.patient.user.email }}</p>
-            {% if prescription.patient.date_of_birth %}
-              <p class="party-dob">DOB: {{ prescription.patient.date_of_birth|date:"F d, Y" }}</p>
+            <h3>{{ prescription.appointment.patient.get_full_name_or_username }}</h3>
+            <p class="party-contact">{{ prescription.appointment.patient.user.email }}</p>
+            {% if prescription.appointment.patient.dob %}
+              <p class="party-dob">DOB: {{ prescription.appointment.patient.dob|date:"F d, Y" }}</p>
             {% endif %}
           </div>
         </div>
@@ -92,19 +89,16 @@
                   <label>Dosage</label>
                   <div class="detail-value">{{ medication.dosage }}</div>
                 </div>
-
                 <div class="medication-detail-item">
                   <label>Frequency</label>
                   <div class="detail-value">{{ medication.frequency }}</div>
                 </div>
-
                 <div class="medication-detail-item">
                   <label>Duration</label>
                   <div class="detail-value">{{ medication.duration }}</div>
                 </div>
               </div>
 
-              {# Medication Instructions #}
               <div class="medication-instructions">
                 <label>How to take</label>
                 <p>Take {{ medication.dosage }} {{ medication.frequency|lower }} for {{ medication.duration|lower }}</p>
@@ -119,7 +113,6 @@
       {% endif %}
     </div>
 
-    {# Additional Notes Section #}
     {% if prescription.notes %}
       <div class="notes-detail-section">
         <h2 class="section-heading">📝 Additional Notes</h2>
@@ -129,7 +122,6 @@
       </div>
     {% endif %}
 
-    {# Important Information #}
     <div class="prescription-disclaimer">
       <h4>⚠️ Important Information</h4>
       <ul>
@@ -141,12 +133,11 @@
       </ul>
     </div>
 
-    {# Action Buttons #}
     <div class="prescription-detail-actions">
       <a href="{% url 'prescriptions:list' %}" class="btn btn-secondary">
         <span>←</span> Back to Prescriptions
       </a>
-      {% if user.is_patient %}
+      {% if user.patientprofile %}
         <a href="{% url 'appointments:appointment-list' %}" class="btn btn-outline-primary">
           <span>📅</span> Book Follow-up
         </a>

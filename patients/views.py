@@ -30,11 +30,12 @@ from patients.models import PatientProfile
 # ✅ NEW imports for urgency predictor
 from .forms import UrgencyForm
 from mlmodule.predictor import predict_urgency
-
+from django.contrib.auth.decorators import login_required
 
 # -------------------------------
 # Dashboard View
 # -------------------------------
+@login_required
 def dashboard_view(request):
     if not request.user.is_authenticated:
         return redirect('accounts:login')
