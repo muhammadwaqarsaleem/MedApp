@@ -176,7 +176,15 @@ class LoginView(View):
         except Exception:
             pass
 
-        return redirect(reverse("patients:dashboard"))
+        # Map user roles to their respective app namespaces
+        role_to_app = {
+            'PATIENT': 'patients',
+            'DOCTOR': 'doctors',
+            'HOSPITAL': 'hospitals',
+            'ADMIN': 'adminpanel',
+        }
+        app_name = role_to_app.get(user.role, 'patients')  # Default to patients
+        return redirect(reverse(f"{app_name}:dashboard"))
 
 
 class LogoutView(LoginRequiredMixin, View):

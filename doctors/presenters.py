@@ -147,7 +147,7 @@ def shift_adapter(shift):
         pass
 
     # Link to schedules dashboard/calendar
-    href = _try_resolve_url(["schedules:schedule-dashboard", "schedules:doctor-schedules", "schedules:schedule-calendar"])
+    href = _try_resolve_url(["schedules:schedule-dashboard", "schedules:doctor-schedules", "schedules:schedule-calendar", "schedules:schedules"])
 
     return {
         "title": title,
